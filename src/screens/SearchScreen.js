@@ -1,27 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import SearchBar from '../components/SearchBar';
-import yelp from '../api/yelp';
+import useResults from '../hooks/useResults';
+import ResultsList from '../components/ResultsList';
+
+const RESULT_TYPES = [
+  { name: 'Cost Effective', price: '£' },
+  { name: 'Bit Pricier', price: '££' },
+  { name: 'Big Spender', price: '£££' }
+];
 
 const SearchScreen = () => {
   const [term, setTerm] = useState('');
-  const [results, setResults] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [searchApi, results, errorMessage] = useResults();
 
-  const searchApi = async searchTerm => {
-    try {
-      const response = await yelp.get('/search', {
-        params: {
-          limit: 50,
-          term: searchTerm,
-          location: 'london'
-        }
-      });
-      setResults(response.data.businesses);
-      setErrorMessage('');
-    } catch (err) {
-      setErrorMessage('Ooops... something went wrong');
-    }
+  const filterResultsByPrice = price => {
+    // price === '£' || '££' || '£££'
+    return results.filter(result => {
+      return result.price === price;
+    });
   };
 
   return (
@@ -33,6 +30,12 @@ const SearchScreen = () => {
       />
       {errorMessage.length ? <Text>{errorMessage}</Text> : null}
       <Text>We have found {results.length} results</Text>
+      {RESULT_TYPES.map((type, index) => (
+        <ResultsList
+          title={type.name}
+          results={filterResultsByPrice(type.price)}
+        />
+      ))}
     </View>
   );
 };
