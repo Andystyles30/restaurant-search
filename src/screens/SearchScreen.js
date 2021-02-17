@@ -10,7 +10,7 @@ const RESULT_TYPES = [
   { id: 3, name: 'Big Spender', price: '£££' }
 ];
 
-const SearchScreen = ({ navigation }) => {
+const SearchScreen = () => {
   const [term, setTerm] = useState('');
   const [searchApi, results, errorMessage] = useResults();
 
@@ -35,7 +35,6 @@ const SearchScreen = ({ navigation }) => {
             key={type.id}
             title={type.name}
             results={filterResultsByPrice(type.price)}
-            navigation={navigation}
           />
         ))}
       </ScrollView>
